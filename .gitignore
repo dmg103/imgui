@@ -1,3 +1,7 @@
+## Makefile
+bin/
+obj/
+
 ## OSX artifacts
 .DS_Store
 

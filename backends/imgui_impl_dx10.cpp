@@ -253,14 +253,8 @@ void ImGui_ImplDX10_RenderDrawData(ImDrawData* draw_data)
             }
             else
             {
-                // Project scissor/clipping rectangles into framebuffer space
-                ImVec2 clip_min(pcmd->ClipRect.x - clip_off.x, pcmd->ClipRect.y - clip_off.y);
-                ImVec2 clip_max(pcmd->ClipRect.z - clip_off.x, pcmd->ClipRect.w - clip_off.y);
-                if (clip_max.x < clip_min.x || clip_max.y < clip_min.y)
-                    continue;
-
                 // Apply scissor/clipping rectangle
-                const D3D10_RECT r = { (LONG)clip_min.x, (LONG)clip_min.y, (LONG)clip_max.x, (LONG)clip_max.y };
+                const D3D10_RECT r = { (LONG)(pcmd->ClipRect.x - clip_off.x), (LONG)(pcmd->ClipRect.y - clip_off.y), (LONG)(pcmd->ClipRect.z - clip_off.x), (LONG)(pcmd->ClipRect.w - clip_off.y)};
                 ctx->RSSetScissorRects(1, &r);
 
                 // Bind texture, Draw
@@ -556,9 +550,8 @@ bool    ImGui_ImplDX10_Init(ID3D10Device* device)
 
 void ImGui_ImplDX10_Shutdown()
 {
-    ImGui_ImplDX10_Data* bd = ImGui_ImplDX10_GetBackendData();
-    IM_ASSERT(bd != NULL && "No renderer backend to shutdown, or already shutdown?");
     ImGuiIO& io = ImGui::GetIO();
+    ImGui_ImplDX10_Data* bd = ImGui_ImplDX10_GetBackendData();
 
     ImGui_ImplDX10_InvalidateDeviceObjects();
     if (bd->pFactory) { bd->pFactory->Release(); }
